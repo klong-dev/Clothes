@@ -1,0 +1,140 @@
+<template>
+  <nav class="">
+    <div class="container-custom d-flex justify-content-between">
+      <div class="nav-left">
+        <router-link to="/">
+          <img src="/images/logo.png" alt="logo" />
+        </router-link>
+      </div>
+      <div class="nav-right">
+        <ul>
+          <li class="d-flex align-items-center">
+            <i style='color: blue' class="bi bi-telephone"></i>
+            <a style='color: blue; font-size: 16px;' href="tel:+8424 0123 4564">+8424 0123 4564</a>
+          </li>
+          <li class="border-box">
+            <i class="bi bi-handbag"></i><br>
+            <router-link to="/cart"> Giỏ hàng</router-link>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <nav class="">
+    <div class="container-custom d-flex justify-content-between">
+      <div class="nav-left">
+        <ul>
+          <li>
+            <router-link to="/">TRANG CHỦ</router-link>
+          </li>
+          <li>
+            <router-link to="/contact">LIÊN HỆ</router-link>
+          </li>
+          <li class="category-list">
+            <a class="dropdown-control" href="#" @click="dropdown()">
+              Dropdown link
+            </a>
+
+            <ul v-show="showDropdown" class="dropdown-list">
+              <li><a class="dropdown-item" href="#">Action</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="nav-right">
+        <form action="/" method="post">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Nhập số điện thoại" name="search">
+            <button type="submit" class="btn btn-danger">Kiểm tra đơn</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </nav>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      showDropdown: false
+    }
+  },
+  methods: {
+    dropdown() {
+      this.showDropdown = !this.showDropdown;
+    }
+  },
+}
+</script>
+<style lang="scss">
+$border-translucent: rgba(0, 0, 0, 0.1);
+
+.category-list {
+  position: relative;
+}
+
+.dropdown-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start !important;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid $border-translucent;
+  border-radius: 5px;
+  padding: 10px;
+  z-index: 2;
+}
+
+nav {
+  width: 100vw;
+  padding: 10px 0 20px 0;
+  border-bottom: 1px solid $border-translucent;
+
+  .nav-left,
+  .nav-right {
+    display: flex;
+    align-items: center;
+
+    ul {
+      margin-bottom: 0 !important;
+      display: flex;
+      align-items: center;
+
+      li {
+        margin-right: 20px;
+        list-style: none;
+
+        a {
+          text-decoration: none;
+          color: rgb(253, 85, 56);
+          font-size: 16px;
+
+          &:hover {
+            color: #f00;
+          }
+        }
+
+        i {
+          font-size: 20px;
+        }
+      }
+    }
+  }
+}
+
+.border-box {
+  text-align: center;
+  border: 1px solid $border-translucent;
+  padding: 7px;
+  border-radius: 7px;
+
+  a {
+    font-size: 14px !important;
+    color: black !important;
+  }
+}
+</style>
