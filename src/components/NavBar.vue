@@ -1,3 +1,6 @@
+<script setup>
+import CartSideBar from './CartSideBar.vue';
+</script>
 <template>
   <nav class="">
     <div class="container-custom d-flex justify-content-between">
@@ -10,11 +13,10 @@
         <ul>
           <li class="d-flex align-items-center">
             <i style='color: blue' class="bi bi-telephone"></i>
-            <a style='color: blue; font-size: 16px;' href="tel:+8424 0123 4564">+8424 0123 4564</a>
+            <a style='color: blue; font-size: 16px;' href="tel:+8424 0123 4564"> 024.0123.454</a>
           </li>
-          <li class="border-box">
-            <i class="bi bi-handbag"></i><br>
-            <router-link to="/cart"> Giỏ hàng</router-link>
+          <li>
+            <CartSideBar />
           </li>
         </ul>
       </div>
@@ -30,15 +32,15 @@
           <li>
             <router-link to="/contact">LIÊN HỆ</router-link>
           </li>
-          <li class="category-list">
+          <li class="category-list" v-click-outside="closeCategory">
             <a class="dropdown-control" href="#" @click="dropdown()">
-              Dropdown link
+              Danh mục sản phẩm +
             </a>
 
             <ul v-show="showDropdown" class="dropdown-list">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
+              <li v-for="category in category_store.category_list" :key="category.id">
+                <router-link class="dropdown-item" :to="'/category?id=' + category.id">{{ category.name }}</router-link>
+              </li>
             </ul>
           </li>
         </ul>
@@ -55,15 +57,25 @@
   </nav>
 </template>
 <script>
+import { useStore } from '../stores/category';
 export default {
+  components: {
+    CartSideBar
+  },
   data() {
     return {
+      category_store: useStore(),
       showDropdown: false
     }
   },
   methods: {
     dropdown() {
       this.showDropdown = !this.showDropdown;
+    },
+    closeCategory() {
+      if (this.showDropdown) {
+        this.showDropdown = false;
+      }
     }
   },
 }
@@ -87,6 +99,16 @@ $border-translucent: rgba(0, 0, 0, 0.1);
   border-radius: 5px;
   padding: 10px;
   z-index: 2;
+
+  .dropdown-item {
+    width: 100%;
+    margin-bottom: 5px;
+    border-bottom: 0.5px solid rgba(128, 128, 128, 0.315);
+
+    &:focus {
+      color: blue;
+    }
+  }
 }
 
 nav {

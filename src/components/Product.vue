@@ -10,14 +10,26 @@
       <span class="price">{{ salePrice }}đ</span>
       <span class="price sale">{{ price }}đ</span>
     </p>
+    <button class="addCart-btn btn" @click="add_cart()">Thêm vào giỏ hàng</button>
   </div>
 </template>
 <script>
+import { useCartStore } from '../stores/cart'
 export default {
+  data() {
+    return {
+      store: useCartStore(),
+    }
+  },
   props: {
     product: {
       type: Object,
-      required: true
+      required: true,
+    }
+  },
+  methods: {
+    add_cart() {
+      this.store.add(this.product);
     }
   },
   computed: {
@@ -39,6 +51,16 @@ export default {
   flex-direction: column;
   align-items: center;
   position: relative;
+  margin-bottom: 20px;
+
+  .addCart-btn {
+    padding: 5px 10px;
+    background-color: rgb(255, 255, 255);
+    color: black;
+    border: 0.5px solid rgba(128, 128, 128, 0.74);
+    border-radius: 5px;
+    cursor: pointer;
+  }
 
   .product-sale {
     position: absolute;

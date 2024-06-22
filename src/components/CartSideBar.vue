@@ -1,105 +1,149 @@
 <script setup>
-import Cookies from 'js-cookie';
 </script>
 
 <template>
-  <div class="cart" id="cart" ref="cart">
-    <div class="cart-header">
-      <p>
-        <i class="bi bi-bag"></i>
-        Giỏ hàng
-      </p>
-      <div class="cart-close-icon">
-        <i @click="cart_close" class="bi bi-box-arrow-right"></i>
-      </div>
-    </div>
-    <div class="cart-body">
-      <div v-if="store.cart_list == null || store.cart_list.length == 0" class="cart-empty">
-        <div class="cart-title">
-          <h3>Giỏ hàng của bạn đang trống!</h3>
-          <p>Hãy thêm sản phẩm vào giỏ hàng của bạn.</p>
-        </div>
-        <div class="cart-image">
-          <img src="/assets/images/cart-icon.webp" alt="">
-        </div>
-      </div>
-      <div v-if="store.cart_list != null && store.cart_list.length > 0" class="cart-list">
-        <div v-for="(cart, index) in store.cart_list" :key="index" class="cart-item row">
-          <div class="col-3 cart-item-image">
-            <img :src="cart.item.image" :alt="cart.item.name">
-          </div>
-          <div class="col-6 cart-item-content">
-            <h6>{{ cart.item.name }}</h6>
-            <div class="cart-product-control">
-              <button id="descProduct-btn" @click="descProduct(cart.item.id)">-</button>
-              <input type="text" :value="cart.quantity" disabled>
-              <button id="inscProduct-btn" @click="inscProduct(cart.item.id)">+</button>
-            </div>
-            <p class="remove-cart-item" @click="removeCart(index)">Xóa khỏi giỏ hàng</p>
-          </div>
-          <div class="col-3">
-            <h6>{{ cart.item.price }}</h6>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="cart-footer">
-      <div v-if="store.cart_list != null && store.cart_list.length > 0" class="checkout-form">
-        <div class="form-group">
-          <label for="checkout_name">Tên liên hệ: </label>
-          <input type="text" placeholder="Họ và tên" id="checkout_name">
-        </div>
-        <div class="form-group">
-          <label for="checkout_name">Số điện thoại: </label>
-          <input type="text" placeholder="Nhập số điện thoại" id="checkout_name">
-        </div>
-        <h4>Tổng đơn: {{ store.totalPay() }}</h4>
-        <button id="checkout-cart-btn" class="btn">Lên đơn giỏ hàng</button>
-      </div>
-      <div class="cart-close-lable">
-        <p @click="cart_close">Đóng giỏ hàng</p>
-      </div>
-    </div>
+  <div class="border-box cart-control" @click="cart_open()">
+    <i class="bi bi-handbag"></i><br>
+    <span>Giỏ hàng</span>
   </div>
+  <Teleport to="#sidebar">
+    <Transition>
+      <div class="overlay" v-if="cart_show" @click="cart_show = false"></div>
+    </Transition>
+    <Transition>
+      <div class="cart" id="cart" v-if="cart_show">
+        <div class="cart-header">
+          <p>
+            <i class="bi bi-bag"></i>
+            Giỏ hàng
+          </p>
+          <div class="cart-close-icon">
+            <i @click="cart_close" class="bi bi-box-arrow-right"></i>
+          </div>
+        </div>
+        <div class="cart-body">
+          <div v-if="store.cart_list == null || store.cart_list.length == 0" class="cart-empty">
+            <div class="cart-title">
+              <h3>Giỏ hàng của bạn đang trống!</h3>
+              <p>Hãy thêm sản phẩm vào giỏ hàng của bạn.</p>
+            </div>
+            <div class="cart-image">
+              <img src="/images/cart-icon.webp" alt="">
+            </div>
+          </div>
+          <div v-if="store.cart_list != null && store.cart_list.length > 0" class="cart-list">
+            <div v-for="(cart, index) in store.cart_list" :key="index" class="cart-item row">
+              <div class="col-3 cart-item-image">
+                <img :src="cart.item.image" :alt="cart.item.name">
+              </div>
+              <div class="col-6 cart-item-content">
+                <h6>{{ cart.item.name }}</h6>
+                <div class="cart-product-control">
+                  <button id="descProduct-btn" @click="descProduct(cart.item.id)">-</button>
+                  <input type="text" :value="cart.quantity" disabled>
+                  <button id="inscProduct-btn" @click="inscProduct(cart.item.id)">+</button>
+                </div>
+                <p class="remove-cart-item" @click="removeCart(cart.item.id)">Xóa khỏi giỏ hàng</p>
+              </div>
+              <div class="col-3">
+                <h6>{{ (cart.item.price * cart.quantity).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") }}đ</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cart-footer">
+          <div v-if="store.cart_list != null && store.cart_list.length > 0" class="checkout-form">
+            <div class="form-group">
+              <label for="checkout_name">Tên liên hệ: </label>
+              <input type="text" placeholder="Họ và tên" id="checkout_name">
+            </div>
+            <div class="form-group">
+              <label for="checkout_name">Số điện thoại: </label>
+              <input type="text" placeholder="Nhập số điện thoại" id="checkout_name">
+            </div>
+            <h4>Tổng đơn: {{ totalPay }}</h4>
+            <button id="checkout-cart-btn" class="btn">Lên đơn giỏ hàng</button>
+          </div>
+          <div class="cart-close-lable">
+            <p @click="cart_close">Đóng giỏ hàng</p>
+          </div>
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 <script>
-import { useStore } from '../../store/store.js';
+import { useCartStore } from '../stores/cart'
 export default {
   data() {
     return {
-      store: useStore()
+      store: useCartStore(),
+      cart_show: false,
     }
   },
   methods: {
-    cart_close() {
-      const sidebar = document.getElementById('cart');
-      sidebar.classList.toggle('open');
+    cart_open() {
+      this.cart_show = true
     },
-    removeCart(index) {
-      this.store.cart_list.splice(index, 1);
-      this.setCookie('cart', JSON.stringify(this.store.cart_list));
+    cart_close() {
+      this.cart_show = false
+    },
+    removeCart(id) {
+      this.store.remove(id)
     },
     inscProduct(id) {
-      this.store.inscreaseItemQuantity(id);
-      this.setCookie('cart', JSON.stringify(this.store.cart_list));
+      this.store.increaseItemQuantity(id);
     },
     descProduct(id) {
-      this.store.descreaseItemQuantity(id);
-      this.setCookie('cart', JSON.stringify(this.store.cart_list));
-    },
-    setCookie(name, value) {
-      Cookies.set(name, value, { expires: 7 });
+      this.store.decreaseItemQuantity(id);
     },
     loadCookie() {
-      const cookieValue = Cookies.get('cart');
+      const cookieValue = this.$cookies.get('cart')
       if (cookieValue != null) {
-        this.store.cart_list = JSON.parse(cookieValue);
+        this.store.cart_list = cookieValue;
       }
     },
+  },
+  computed: {
+    totalPay() {
+      let total = 0;
+      for (let i = 0; i < this.store.cart_list.length; i++) {
+        const p = parseInt(this.store.cart_list[i].item.price.toString().replace(/\D/g, ''));
+        total += p * this.store.cart_list[i].quantity;
+      }
+      return total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " ₫";
+    }
+  },
+  mounted() {
+    this.loadCookie()
   },
 }
 </script>
 <style lang="scss" scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 2;
+}
+
+.cart-control {
+  cursor: pointer;
+}
+
 .cart.open {
   opacity: 1;
   transform: translateX(0);
@@ -110,10 +154,9 @@ export default {
   height: 100vh;
   background-color: white;
   position: fixed;
-  right: 0;
+  right: 410px;
   top: 0;
   z-index: 3;
-  opacity: 0;
   transform: translateX(100%);
   transition: opacity 0.3s ease, transform 0.3s ease;
 
@@ -192,6 +235,7 @@ export default {
 
       .remove-cart-item {
         font-size: 14px;
+        cursor: pointer;
       }
 
     }
