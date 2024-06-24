@@ -1,7 +1,7 @@
 const AdminDetail = require('../models/AdminDetail');
 
 class AdminDetailController {
-  async getAllItems(req, res) {
+  async getAdminDetail(req, res) {
     try {
       let items = await AdminDetail.findAll();
       res.json({ "error_code": 0, items });
