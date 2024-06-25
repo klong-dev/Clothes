@@ -1,11 +1,12 @@
 <template>
-  <div class="product">
+  <div class="product" @click="view_product()">
     <div v-if="product.sale > 0" class="product-sale">
       <span>{{ sale }}</span>
     </div>
-    <img class="product-image" :src="product.image" :alt="product.name">
+    <!-- <img class="product-image" :src="product.image" :alt="product.name"> -->
+    <img class="product-image" :src="randomImage" :alt="product.name">
     <h5>{{ product.name }}</h5>
-    <p v-if="product.sale <= 0" class="price">{{ product.price }}đ</p>
+    <p v-if="product.sale <= 0" class="price">{{ price }}đ</p>
     <p v-else>
       <span class="price">{{ salePrice }}đ</span>
       <span class="price sale">{{ price }}đ</span>
@@ -19,6 +20,7 @@ export default {
   data() {
     return {
       store: useCartStore(),
+      randomImage: null,
     }
   },
   props: {
@@ -28,9 +30,33 @@ export default {
     }
   },
   methods: {
+    view_product() {
+      this.$router.push({
+        name: 'view-product', params: {
+          id: this.product.id,
+          name: this.product.name,
+          price: this.product.price,
+          sale: this.product.sale,
+          imgPath: this.product.image,
+          description: this.product.description
+        }
+      });
+    },
     add_cart() {
       this.store.add(this.product);
+    },
+
+    async fetchRandomImage() {
+      try {
+        const response = await fetch('https://picsum.photos/241/200');
+        this.randomImage = response.url;
+      } catch (error) {
+        console.error('Error fetching random image:', error);
+      }
     }
+  },
+  created() {
+    this.fetchRandomImage();
   },
   computed: {
     sale() {
@@ -52,6 +78,14 @@ export default {
   align-items: center;
   position: relative;
   margin-bottom: 20px;
+  cursor: pointer;
+
+  &:hover {
+    img {
+      transform: scale(1.02);
+      transition: transform 0.5s;
+    }
+  }
 
   .addCart-btn {
     padding: 5px 10px;

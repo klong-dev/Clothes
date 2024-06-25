@@ -57,7 +57,8 @@ import CartSideBar from './CartSideBar.vue';
   </nav>
 </template>
 <script>
-import { useStore } from '../stores/category';
+import { useStore } from '../stores/category'
+import axios from 'axios'
 export default {
   components: {
     CartSideBar
@@ -76,8 +77,20 @@ export default {
       if (this.showDropdown) {
         this.showDropdown = false;
       }
+    },
+    loadCategory() {
+      axios.get('http://localhost:3000/category/all')
+        .then(response => {
+          this.category_store.set(response.data.items);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
   },
+  mounted() {
+    this.loadCategory();
+  }
 }
 </script>
 <style lang="scss">

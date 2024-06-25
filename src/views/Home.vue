@@ -3,7 +3,7 @@ import Product from "@/components/Product.vue";
 </script>
 <template>
   <div class="container-content">
-    <div v-for="category in category_store.category_list" :key="category.id">
+    <div v-for="(category, index) in category_store.category_list" :key="index">
       <h4 class="category">
         DANH MỤC:
         <router-link class="category-link" :to="'/category?id=' + category.id">
@@ -11,7 +11,7 @@ import Product from "@/components/Product.vue";
         </router-link>
       </h4>
       <div class="product-list row">
-        <Product v-for="product in loadProduct(category.id)" :key="product.name" :product="product"
+        <Product v-for="product in products[index]" :key="product.name" :product="product"
           class="col-12 col-sm-11 col-md-5 col-lg-3 col-xl-3" />
       </div>
     </div>
@@ -20,6 +20,7 @@ import Product from "@/components/Product.vue";
 <script>
 // import axios from 'axios';
 import { useStore } from '../stores/category'
+import axios from "axios";
 export default {
   components: {
     Product
@@ -27,49 +28,31 @@ export default {
   data() {
     return {
       category_store: useStore(),
-      products: [
-        { id: 1, description: 'About this product', categoryID: 2, image: '/images/products/p2.webp', name: 'Áo Tee - HEART', sale: 23, price: 320000 },
-        { id: 9, description: 'About this product', categoryID: 2, image: '/images/products/p3.webp', name: 'Áo Tee - 110', sale: 30, price: 320000 },
-        { id: 10, description: 'About this product', categoryID: 2, image: '/images/products/p2.webp', name: 'Áo Tee - HEART', sale: 23, price: 320000 },
-        { id: 2, description: 'About this product', categoryID: 2, image: '/images/products/p3.webp', name: 'Áo Tee - 110', sale: 30, price: 320000 },
-        { id: 3, description: 'About this product', categoryID: 3, image: '/images/products/p1.webp', name: 'Áo Tee - Number 11', sale: 23, price: 320000 },
-        { id: 4, description: 'About this product', categoryID: 3, image: '/images/products/p1.webp', name: 'Áo Tee - Number 11', sale: 23, price: 320000 },
-        { id: 5, description: 'About this product', categoryID: 4, image: '/images/products/p2.webp', name: 'Áo Tee - HEART', sale: 23, price: 320000 },
-        { id: 6, description: 'About this product', categoryID: 4, image: '/images/products/p3.webp', name: 'Áo Tee - 110', sale: 30, price: 320000 },
-        { id: 7, description: 'About this product', categoryID: 5, image: '/images/products/p1.webp', name: 'Áo Tee - Number 11', sale: 23, price: 320000 },
-        { id: 8, description: 'About this product', categoryID: 5, image: '/images/products/p2.webp', name: 'Áo Tee - HEART', sale: 23, price: 320000 }
-      ],
+      products: []
     }
   },
   methods: {
-    loadProduct(id) {
-      // axios.get('http://localhost:3000/product/load')
-      //   .then(response => {
-      //     this.products = response.data;
-      //   })
-      //   .catch(error => {
-      //     console.log(error);
-      //   });
-      return this.products.filter(product => product.categoryID === id);
+    async loadProduct() {
+      for (let category in this.category_store.category_list) {
+        let c = this.category_store.category_list[category];
+        let res = await axios.get(`http://localhost:3000/product/category/${c.id}`);
+        this.products.push(res.data.items);
+        console.log(res.data)
+      }
+
     },
-    loadCategory() {
-      // axios.get('http://localhost:3000/category/load')
-      //   .then(response => {
-      //     this.category = response.data;
-      //   })
-      //   .catch(error => {
-      //     console.log(error);
-      //   });
-      this.category_store.set([
-        { id: 2, name: 'Áo' },
-        { id: 5, name: 'Quần' },
-        { id: 3, name: 'Giày' },
-        { id: 4, name: 'Phụ kiện' }
-      ])
+  },
+  // create watch for this.category_store.category_list
+  watch: {
+    'category_store.category_list': {
+      handler: function () {
+        this.loadProduct();
+      },
+      deep: true
     }
   },
   mounted() {
-    this.loadCategory();
+    this.loadProduct();
   },
 }
 </script>
