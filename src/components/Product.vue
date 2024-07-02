@@ -37,7 +37,7 @@ export default {
           name: this.product.name,
           price: this.product.price,
           sale: this.product.sale,
-          imgPath: this.product.image,
+          imgPath: this.product.image || this.randomImage,
           description: this.product.description
         }
       });

@@ -39,7 +39,6 @@ export default {
         this.products.push(res.data.items);
         console.log(res.data)
       }
-
     },
   },
   // create watch for this.category_store.category_list
